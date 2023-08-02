@@ -80,6 +80,13 @@ const main = async () => {
 
     // Providing message
     let message = "", convertedMessage = [], validMessage = false;
+
+    if (process.argv.indexOf("--upload") != -1) {
+        validMessage = true;
+        let fileIndex = process.argv.indexOf("--upload") + 1;
+        // todo: code for uploading particular file
+    }
+
     if(process.argv.indexOf("--message") != -1){
         // pass message in " " if it contains spaces
         let messageIndex = process.argv.indexOf("--message")+1;
