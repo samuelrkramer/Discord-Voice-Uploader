@@ -84,7 +84,49 @@ const main = async () => {
     if (process.argv.indexOf("--upload") != -1) {
         validMessage = true;
         let fileIndex = process.argv.indexOf("--upload") + 1;
+        let filePath = process.argv[fileIndex];
+        // console.log({fileIndex, fileName})
+        // return;
         // todo: code for uploading particular file
+
+        // copy and paste sending code
+        // TODO: DRY this up, refactor out to helper functions
+
+        // Uploading file
+        console.log(`\n\n${colors.fg.yellow}[?] Uploading file to channel ${channelData.name} (${channelData.id})...`);
+        const filename = await uploadFile(filePath, channelID).catch(err => {
+            console.log(`${colors.fg.red}[-] Error while uploading file, please try again.`);
+            console.log(err);
+        });
+
+        // Sending final message
+        console.log(`\n\n[?] File uploaded, filename: ${filename}, sending message...`);
+        const data = {
+            flags: 8192, // 8192 is a voice message
+            attachments: [
+                {
+                    id: "0",
+                    description: "",
+                    filename: "file.mp3",
+                    uploaded_filename: filename,
+                    duration_secs: config.audioLengthSeconds,
+                    // waveform: convertedMessage[1],
+                    // hardcoding in a valid waveform cause I know Discord rejects without a valid one
+                    waveform: 'nUjsufshEzcSdHNldCB0c3JpZiBlaHQgc2kgc2lodCETNxJIhUkO8GgRQepbW6AP8Ak=',
+                    content_type: "audio/mpeg",
+                }
+            ]
+        }
+        const [isSent, sentData] = await sendMessage(channelID, data);
+        if(!isSent) {
+            console.log(`${colors.fg.red}[-] Error while sending message, please try again.`);
+            return console.log(sentData);
+        }
+
+
+        console.log(`\n\n${colors.fg.green}[✅] Message sent, message ID: ${sentData.id}`);
+        await wait(1000);
+        return;
     }
 
     if(process.argv.indexOf("--message") != -1){
